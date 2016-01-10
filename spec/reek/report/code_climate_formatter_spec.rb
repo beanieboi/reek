@@ -1,23 +1,23 @@
 require_relative '../../spec_helper'
 require_lib 'reek/report/code_climate_formatter'
 
-RSpec.describe Reek::Report::CodeClimateFormatter, '#to_hash' do
+RSpec.describe Reek::Report::CodeClimateFormatter, '#render' do
   it "sets the type as 'issue'" do
     warning = FactoryGirl.build(:smell_warning)
     issue = Reek::Report::CodeClimateFormatter.new(warning)
 
-    result = issue.to_hash
+    result = issue.render
 
-    expect(result).to include(type: 'issue')
+    expect(result).to match(/\"type\":\"issue\"/)
   end
 
   it 'sets the category' do
     warning = FactoryGirl.build(:smell_warning)
     issue = Reek::Report::CodeClimateFormatter.new(warning)
 
-    result = issue.to_hash
+    result = issue.render
 
-    expect(result).to include(categories: ['Complexity'])
+    expect(result).to match(/\"categories\":\[\"Complexity\"\]/)
   end
 
   it 'constructs a description based on the context and message' do
@@ -26,10 +26,9 @@ RSpec.describe Reek::Report::CodeClimateFormatter, '#to_hash' do
                                 message: 'message bar')
     issue = Reek::Report::CodeClimateFormatter.new(warning)
 
-    result = issue.to_hash
+    result = issue.render
 
-    expect(result).to include(
-      description: 'context foo message bar')
+    expect(result).to match(/\"description\":\"context foo message bar\"/)
   end
 
   it 'sets a check name based on the smell detector' do
@@ -37,9 +36,9 @@ RSpec.describe Reek::Report::CodeClimateFormatter, '#to_hash' do
                                 smell_detector: Reek::Smells::UtilityFunction.new)
     issue = Reek::Report::CodeClimateFormatter.new(warning)
 
-    result = issue.to_hash
+    result = issue.render
 
-    expect(result).to include(check_name: 'LowCohesion/UtilityFunction')
+    expect(result).to match(%r{\"check_name\":\"LowCohesion\/UtilityFunction\"})
   end
 
   it 'sets the location' do
@@ -48,16 +47,8 @@ RSpec.describe Reek::Report::CodeClimateFormatter, '#to_hash' do
                                 source: 'a/ruby/source/file.rb')
     issue = Reek::Report::CodeClimateFormatter.new(warning)
 
-    result = issue.to_hash
+    result = issue.render
 
-    expect(result).to include(
-      location: {
-        path: 'a/ruby/source/file.rb',
-        lines: {
-          begin: 1,
-          end: 2
-        }
-      }
-    )
+    expect(result).to match(%r{\"location\":{\"path\":\"a/ruby/source/file.rb\",\"lines\":{\"begin\":1,\"end\":2}}})
   end
 end

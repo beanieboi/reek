@@ -45,7 +45,7 @@ module Reek
 
       # :reek:UtilityFunction
       def format_code_climate_hash(warning)
-        CodeClimateFormatter.new(warning).to_hash
+        CodeClimateFormatter.new(warning).render
       end
 
       private_attr_reader :location_formatter

@@ -11,12 +11,12 @@ module Reek
         @warning = warning
       end
 
-      def to_hash
+      def render
         CCEngine::Issue.new(check_name: check_name,
                             description: description,
                             categories: categories,
                             location: location
-                           ).to_hash
+                           ).render
       end
 
       private
